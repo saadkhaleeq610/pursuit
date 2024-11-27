@@ -8,7 +8,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="bg-white shadow-sm w-full border-b-[1px] border-opacity-40 border-pursuit-black">
-      <div className="flex justify-between items-center h-18 px-8">
+      <div className="flex justify-between items-center h-18 px-14">
         {/* Logo */}
         <div className="flex-shrink-0">
           <img width={80} src={PursuitLogo} alt="Pursuit Logo" />
