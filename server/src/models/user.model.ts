@@ -8,11 +8,6 @@ interface IUser extends Document {
 }
 
 const userSchema: Schema = new mongoose.Schema({
-    firstName: { 
-        type: String, 
-        required: true,
-        trim: true
-    },
     fullName: { 
         type: String, 
         required: true,
