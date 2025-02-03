@@ -1,4 +1,3 @@
-// main.go
 package main
 
 import (
@@ -32,7 +31,7 @@ func main() {
 			"message": "pong",
 		})
 	})
-
+	// Saad this handler is just for testing. It is not for the actual use
 	r.POST("/users", handlers.CreateUser(store))
 	r.Run(config.ServerAddress)
 }
