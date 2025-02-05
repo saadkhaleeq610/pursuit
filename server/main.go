@@ -32,6 +32,6 @@ func main() {
 			"message": "pong",
 		})
 	})
-	r.POST("/signuo", handlers.CreateUser(store))
+	r.POST("/signup", handlers.CreateUser(store))
 	r.Run(config.ServerAddress)
 }
