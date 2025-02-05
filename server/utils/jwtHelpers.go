@@ -9,16 +9,34 @@ import (
 	"github.com/saadkhaleeq610/pursuit/server/config"
 )
 
-func CreateToken(email string, role string) (string, error) {
+// In this jwt package there are two types of token . 1) token 2) token string
+
+func CreateAccessToken(email string, role int32) (string, error) {
 	config, err := config.LoadConfig()
 	if err != nil {
 		log.Fatal("Cannot load config:", err)
 	}
+
 	claims := jwt.MapClaims{
 		"email": email,
-		"exp":   time.Now().Add(time.Hour).Unix(),
-		"iat":   time.Now().Unix(),
 		"role":  role,
+		"exp":   time.Now().Add(time.Hour).Unix(), // Access token expires in 1 hour
+		"iat":   time.Now().Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(config.SecretKey))
+}
+
+func CreateRefreshToken(email string) (string, error) {
+	config, err := config.LoadConfig()
+	if err != nil {
+		log.Fatal("Cannot load config:", err)
+	}
+
+	claims := jwt.MapClaims{
+		"email": email,
+		"exp":   time.Now().Add(time.Hour * 24 * 7).Unix(), // Refresh token expires in 7 days
+		"iat":   time.Now().Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(config.SecretKey))

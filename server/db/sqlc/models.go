@@ -39,3 +39,11 @@ type User struct {
 	RoleID       int32
 	RestaurantID pgtype.Int4
 }
+
+type UserToken struct {
+	TokenID      int32
+	UserID       int32
+	RefreshToken string
+	ExpiresAt    pgtype.Timestamp
+	CreatedAt    pgtype.Timestamp
+}
