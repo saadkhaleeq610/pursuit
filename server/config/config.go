@@ -11,6 +11,7 @@ import (
 type Config struct {
 	DatabaseURL   string
 	ServerAddress string
+	SecretKey     string
 }
 
 func LoadConfig() (config Config, err error) {
@@ -28,6 +29,9 @@ func LoadConfig() (config Config, err error) {
 	if config.ServerAddress == "" {
 		config.ServerAddress = ":8080"
 	}
-
+	config.SecretKey = os.Getenv("SECRET_KEY")
+	if config.SecretKey == "" {
+		return config, fmt.Errorf("SECRET_KEY is required")
+	}
 	return config, nil
 }

@@ -1,5 +1,6 @@
 package main
 
+//TODO: better handling of the config . Right Now it is against the DRY Principal
 import (
 	"context"
 	"log"
