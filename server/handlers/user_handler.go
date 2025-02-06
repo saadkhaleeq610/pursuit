@@ -66,7 +66,10 @@ func CreateUser(store *db.Queries) gin.HandlerFunc {
 			RestaurantID: restaurantID,
 		})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to create user",
+				"details": err.Error(),
+			})
 			return
 		}
 
