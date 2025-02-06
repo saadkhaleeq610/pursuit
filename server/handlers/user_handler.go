@@ -18,7 +18,6 @@ type createUserRequest struct {
 	RoleID       int32  `json:"role_id" binding:"required"`
 	RestaurantID *int32 `json:"restaurant_id,omitempty"`
 }
-
 type createUserResponse struct {
 	UserID       int32       `json:"user_id"`
 	Name         string      `json:"name"`
@@ -35,7 +34,6 @@ func CreateUser(store *db.Queries) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-
 		// First we will check if the user already exists with this email
 		// Todo:Need to add email verifcation . We will add it later
 		existingUser, err := store.GetUserByEmail(c, req.Email)
@@ -43,20 +41,17 @@ func CreateUser(store *db.Queries) gin.HandlerFunc {
 			c.JSON(http.StatusConflict, gin.H{"error": "User with this email already exists"})
 			return
 		}
-
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 			return
 		}
-
 		// COnverting  restaurant ID to pgtype.Int4
 		var restaurantID pgtype.Int4
 		if req.RestaurantID != nil {
 			restaurantID.Int32 = *req.RestaurantID
 			restaurantID.Valid = true
 		}
-
 		//In this step user is getted stored in the database
 		user, err := store.CreateUser(c, db.CreateUserParams{
 			Name:         req.Name,
@@ -66,23 +61,23 @@ func CreateUser(store *db.Queries) gin.HandlerFunc {
 			RestaurantID: restaurantID,
 		})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error":   "Failed to create user",
+				"details": err.Error(),
+			})
 			return
 		}
-
 		// Generate tokens
 		accessToken, err := utils.CreateAccessToken(user.Email, user.RoleID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate access token"})
 			return
 		}
-
 		refreshToken, err := utils.CreateRefreshToken(user.Email)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
 			return
 		}
-
 		// Here we are storing refresh token in DB
 		err = store.StoreRefreshToken(c, db.StoreRefreshTokenParams{
 			UserID:       user.UserID,
@@ -102,7 +97,6 @@ func CreateUser(store *db.Queries) gin.HandlerFunc {
 			true,
 			true, // httpOnly
 		)
-
 		response := createUserResponse{
 			UserID:       user.UserID,
 			Name:         user.Name,
@@ -111,7 +105,6 @@ func CreateUser(store *db.Queries) gin.HandlerFunc {
 			RestaurantID: user.RestaurantID,
 			AccessToken:  accessToken,
 		}
-
 		c.JSON(http.StatusCreated, response)
 	}
 }

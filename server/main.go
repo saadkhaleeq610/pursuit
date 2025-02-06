@@ -33,5 +33,6 @@ func main() {
 		})
 	})
 	r.POST("/signup", handlers.CreateUser(store))
+	r.POST("/login", handlers.AuthUser(store))
 	r.Run(config.ServerAddress)
 }
