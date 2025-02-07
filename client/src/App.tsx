@@ -1,17 +1,31 @@
 import './App.css'
-import { MainHero } from './components/MainHero.tsx'
-import Navbar from './components/Navbar.tsx'
-import RegisterLayout from './components/RegisterComponents/RegisterLayout.tsx'
-import VerifyEmail from './components/RegisterComponents/VerifyEmail.tsx'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 function App() {
 
   return (
     <>
-    <Navbar/>
-    <MainHero/>
-    <RegisterLayout/>
-    <VerifyEmail/>
+    <Dialog>
+  <DialogTrigger>Open</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Are you absolutely sure?</DialogTitle>
+      <DialogDescription>
+        This action cannot be undone. This will permanently delete your account
+        and remove your data from our servers.
+      </DialogDescription>
+    </DialogHeader>
+  </DialogContent>
+</Dialog>
+
     </>
   )
 }
