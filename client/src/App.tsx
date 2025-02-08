@@ -1,17 +1,12 @@
 import './App.css'
-import { MainHero } from './components/MainHero.tsx'
-import Navbar from './components/Navbar.tsx'
-import RegisterLayout from './components/RegisterComponents/RegisterLayout.tsx'
-import VerifyEmail from './components/RegisterComponents/VerifyEmail.tsx'
+import { Button } from "@/components/ui/button"
+
 
 function App() {
 
   return (
     <>
-    <Navbar/>
-    <MainHero/>
-    <RegisterLayout/>
-    <VerifyEmail/>
+      <Button>Click me</Button>
     </>
   )
 }

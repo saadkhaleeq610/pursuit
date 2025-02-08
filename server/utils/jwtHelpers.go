@@ -27,52 +27,51 @@ func CreateAccessToken(email string, role int32) (string, error) {
 	return token.SignedString([]byte(config.SecretKey))
 }
 
-func CreateRefreshToken(email string) (string, error) {
+func CreateRefreshToken(email string, userID int32) (string, error) {
 	config, err := config.LoadConfig()
 	if err != nil {
 		log.Fatal("Cannot load config:", err)
 	}
 
 	claims := jwt.MapClaims{
-		"email": email,
-		"exp":   time.Now().Add(time.Hour * 24 * 7).Unix(), // Refresh token expires in 7 days
-		"iat":   time.Now().Unix(),
+		"email":   email,
+		"user_id": userID,
+		"exp":     time.Now().Add(time.Hour * 24 * 7).Unix(),
+		"iat":     time.Now().Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(config.SecretKey))
 }
 
-func ValidateToken(tokenString string) (string, error) {
-	config, err := config.LoadConfig()
-	if err != nil {
-		return "", fmt.Errorf("cannot load config: %v", err)
-	}
-
-	// This will parse token with claims . The return type of this function is of *jwt.Token. This function will also check the validaity of the token
+func ValidateToken(tokenString string, secretKey string) (int, error) {
 	token, err := jwt.ParseWithClaims(tokenString, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Method)
 		}
-		return []byte(config.SecretKey), nil
+		return []byte(secretKey), nil
 	})
 
 	if err != nil {
-		return "", fmt.Errorf("error parsing token: %v", err)
+		log.Printf("Token validation error: %v", err) // Log the error
+		return 0, fmt.Errorf("invalid token")
 	}
-	// Token.valid is set when we call jwt.Parsewithclaims function
-	if token == nil || !token.Valid {
-		return "", fmt.Errorf("invalid token")
+
+	if !token.Valid {
+		log.Println("Token is not valid") // Log if the token is invalid
+		return 0, fmt.Errorf("invalid token")
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return "", fmt.Errorf("invalid token claims")
+		log.Println("Invalid token claims") // Log if claims are invalid
+		return 0, fmt.Errorf("invalid token claims")
 	}
 
-	email, ok := claims["email"].(string)
+	userIDFloat, ok := claims["user_id"].(float64)
 	if !ok {
-		return "", fmt.Errorf("invalid username claim")
+		log.Println("Invalid user_id claim") // Log if user_id is invalid
+		return 0, fmt.Errorf("invalid user_id claim")
 	}
 
-	return email, nil
+	return int(userIDFloat), nil
 }
