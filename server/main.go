@@ -10,6 +10,7 @@ import (
 	"github.com/saadkhaleeq610/pursuit/server/config"
 	db "github.com/saadkhaleeq610/pursuit/server/db/sqlc"
 	"github.com/saadkhaleeq610/pursuit/server/handlers"
+	"github.com/saadkhaleeq610/pursuit/server/middleware"
 )
 
 func main() {
@@ -27,12 +28,8 @@ func main() {
 	store := db.New(dbpool)
 	r := gin.Default()
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.POST("/signup", handlers.CreateUser(store))
-	r.POST("/login", handlers.AuthUser(store))
+	r.POST("/signup", handlers.SignupHandler(store))
+	r.POST("/login", handlers.LoginHandler(store))
+	r.POST("/restaurants", middleware.AuthMiddleware(), handlers.RegisterRestaurant(store))
 	r.Run(config.ServerAddress)
 }
