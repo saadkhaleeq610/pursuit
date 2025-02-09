@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -12,6 +13,22 @@ import (
 	"github.com/saadkhaleeq610/pursuit/server/handlers"
 	"github.com/saadkhaleeq610/pursuit/server/middleware"
 )
+
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+
+		c.Next()
+	}
+}
 
 func main() {
 	config, err := config.LoadConfig()
@@ -27,6 +44,7 @@ func main() {
 
 	store := db.New(dbpool)
 	r := gin.Default()
+	r.Use(CORSMiddleware())
 
 	r.POST("/signup", handlers.SignupHandler(store))
 	r.POST("/login", handlers.LoginHandler(store))
