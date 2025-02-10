@@ -1,21 +1,36 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router"; // Correct import
-import "./index.css";
-import RegisterRestaurantPage from "./pages/RestaurantRegistrationPage.tsx";
-import SignupPage from "./pages/Signup.tsx";
-import LoginPage from "./pages/Login.tsx";
-import LandingPage from "./pages/LandingPage.tsx";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router";
+import "./index.css"
+import LoginPage from "./pages/Login";
+import DashboardPage from "./pages/Dashboard";
+import RegisterRestaurantPage from "./pages/RestaurantRegistrationPage";
+import SignupPage from "./pages/Signup";
+import {ProtectedRoute} from "./ProtectedRoute"; 
+import LandingPage from "./pages/LandingPage";
 
-createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <StrictMode>
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<LandingPage />} />
-        <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="/register-restaurant" element={<RegisterRestaurantPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>
-    </StrictMode>
-  </BrowserRouter>
+    </BrowserRouter>
+  </React.StrictMode>
 );

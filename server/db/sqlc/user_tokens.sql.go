@@ -16,6 +16,7 @@ INSERT INTO user_tokens (user_id, refresh_token, expires_at)
 VALUES ($1, $2, $3)
 RETURNING token_id, user_id, refresh_token, expires_at, created_at
 `
+//TODO: need to add a function to getRefreshToken from the database for /refresh endpoint
 
 type StoreRefreshTokenParams struct {
 	UserID       int32

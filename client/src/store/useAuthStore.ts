@@ -6,8 +6,9 @@ type AuthState = {
   accessToken: string | null;
   isAuthenticated: boolean;
   login: (email: string, accessToken: string) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   refreshAccessToken: () => Promise<void>;
+  checkAuthState: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -31,6 +32,21 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (error) {
       console.error("Error refreshing token:", error);
       set({ accessToken: null, isAuthenticated: false });
+    }
+  },
+
+  checkAuthState: async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/me", { withCredentials: true });
+      set({
+        email: response.data.email,
+        accessToken: response.data.accessToken,
+        isAuthenticated: true,
+      });
+    } catch (error) {
+      set({ email: null, accessToken: null, isAuthenticated: false });
+      console.log(error);
+      
     }
   },
 }));

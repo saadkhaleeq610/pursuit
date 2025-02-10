@@ -7,9 +7,9 @@ import axios from "axios";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export default function LoginPage() {
-  type FormDataType = { email: string; password: string };
+  type FormDataType = { email: string, password: string };
   const [formData, setFormData] = useState<FormDataType>({ email: "", password: "" });
-  const login = useAuthStore((state) => state.login);
+  const { login } = useAuthStore();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,16 +17,20 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Login Data:", formData);
 
     try {
-      const response = await axios.post("http://localhost:8080/login", formData, {
-        withCredentials: true, // Ensures refresh token is stored in HTTP-only cookie
+      const response = await axios.post("http://localhost:8080/login", {
+        email: formData.email,
+        password: formData.password,
       });
+      login(response.data.email, response.data.accessToken);
 
       console.log("Login successful:", response.data);
-      login(response.data.email, response.data.accessToken);
+      // Handle successful login (e.g., store tokens, redirect to dashboard)
     } catch (error) {
       console.error("Login error:", error);
+      // Handle error (e.g., show error message to the user)
     }
   };
 
