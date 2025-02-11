@@ -1,52 +1,41 @@
 import { create } from "zustand";
-import axios from "axios";
+import { persist } from "zustand/middleware";
+
+type User = {
+  id: string;
+  name: string;
+  email: string;
+} | null;
 
 type AuthState = {
-  email: string | null;
+  user: User;
   accessToken: string | null;
   isAuthenticated: boolean;
-  login: (email: string, accessToken: string) => void;
-  logout: () => Promise<void>;
-  refreshAccessToken: () => Promise<void>;
-  checkAuthState: () => Promise<void>;
+  login: (user: User, token: string) => void;
+  logout: () => void;
 };
 
-export const useAuthStore = create<AuthState>((set) => ({
-  email: null,
-  accessToken: null,
-  isAuthenticated: false,
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      accessToken: null,
+      isAuthenticated: false, // Initially false
 
-  login: (email, accessToken) => {
-    set({ email, accessToken, isAuthenticated: true });
-  },
+      login: (user, token) =>
+        set({
+          user,
+          accessToken: token,
+          isAuthenticated: true, // Set true after login
+        }),
 
-  logout: async () => {
-    await axios.post("http://localhost:8080/logout", {}, { withCredentials: true });
-    set({ email: null, accessToken: null, isAuthenticated: false });
-  },
-
-  refreshAccessToken: async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/refresh", { withCredentials: true });
-      set({ accessToken: response.data.accessToken, isAuthenticated: true });
-    } catch (error) {
-      console.error("Error refreshing token:", error);
-      set({ accessToken: null, isAuthenticated: false });
-    }
-  },
-
-  checkAuthState: async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/me", { withCredentials: true });
-      set({
-        email: response.data.email,
-        accessToken: response.data.accessToken,
-        isAuthenticated: true,
-      });
-    } catch (error) {
-      set({ email: null, accessToken: null, isAuthenticated: false });
-      console.log(error);
-      
-    }
-  },
-}));
+      logout: () =>
+        set({
+          user: null,
+          accessToken: null,
+          isAuthenticated: false,
+        }),
+    }),
+    { name: "auth-storage" } // Persist state in localStorage
+  )
+);

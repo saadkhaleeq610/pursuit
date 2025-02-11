@@ -3,13 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import axios from "axios";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useNavigate } from "react-router";
+import axios from "axios";
+import { motion } from "framer-motion";
 
 export default function LoginPage() {
-  type FormDataType = { email: string, password: string };
+  type FormDataType = { email: string; password: string };
   const [formData, setFormData] = useState<FormDataType>({ email: "", password: "" });
+  const [error, setError] = useState<string | null>(null);
+
   const { login } = useAuthStore();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,20 +23,20 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Login Data:", formData);
+    setError(null);
 
     try {
       const response = await axios.post("http://localhost:8080/login", {
         email: formData.email,
         password: formData.password,
       });
-      login(response.data.email, response.data.accessToken);
 
+      login(response.data.email, response.data.accessToken);
       console.log("Login successful:", response.data);
-      // Handle successful login (e.g., store tokens, redirect to dashboard)
+      navigate("/dashboard");
     } catch (error) {
+      setError("Invalid email or password. Please try again.");
       console.error("Login error:", error);
-      // Handle error (e.g., show error message to the user)
     }
   };
 
@@ -41,6 +47,20 @@ export default function LoginPage() {
           <CardTitle className="text-center text-xl font-semibold">Login</CardTitle>
         </CardHeader>
         <CardContent>
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-4"
+            >
+              <Alert variant="destructive">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            </motion.div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="email">Email</Label>
