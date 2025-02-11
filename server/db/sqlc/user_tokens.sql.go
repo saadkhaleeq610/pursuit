@@ -11,12 +11,20 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const deleteRefreshToken = `-- name: DeleteRefreshToken :exec
+DELETE FROM user_tokens WHERE refresh_token = $1
+`
+
+func (q *Queries) DeleteRefreshToken(ctx context.Context, refreshToken string) error {
+	_, err := q.db.Exec(ctx, deleteRefreshToken, refreshToken)
+	return err
+}
+
 const storeRefreshToken = `-- name: StoreRefreshToken :exec
 INSERT INTO user_tokens (user_id, refresh_token, expires_at)
 VALUES ($1, $2, $3)
 RETURNING token_id, user_id, refresh_token, expires_at, created_at
 `
-//TODO: need to add a function to getRefreshToken from the database for /refresh endpoint
 
 type StoreRefreshTokenParams struct {
 	UserID       int32

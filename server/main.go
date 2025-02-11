@@ -51,6 +51,7 @@ func main() {
 	r.POST("/restaurants", middleware.AuthMiddleware(), handlers.RegisterRestaurant(store))
 
 	// apply middleware to /refreshtoken endpoint so that only authenticated users can access it
-	r.POST("/refresh_token", middleware.AuthMiddleware(), handlers.RefreshTokenHandler(store))
+	// r.POST("/refresh_token", middleware.AuthMiddleware(), handlers.RefreshTokenHandler(store))
+	r.POST("/logout", middleware.AuthMiddleware(), handlers.LogoutHandler(store))
 	r.Run(config.ServerAddress)
 }
