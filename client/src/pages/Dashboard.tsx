@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { useAuthStore } from "../store/useAuthStore"; 
 
 export default function DashboardPage() {
-  const { email, isAuthenticated, logout } = useAuthStore(); 
+  const {isAuthenticated, logout } = useAuthStore(); 
 
   // If the user is not authenticated redirect to the login page
   if (!isAuthenticated) {

@@ -20,6 +20,24 @@ func (q *Queries) DeleteRefreshToken(ctx context.Context, refreshToken string) e
 	return err
 }
 
+const getRefreshTokenByToken = `-- name: GetRefreshTokenByToken :one
+SELECT token_id, user_id, refresh_token, expires_at, created_at FROM user_tokens
+WHERE refresh_token = $1
+`
+
+func (q *Queries) GetRefreshTokenByToken(ctx context.Context, refreshToken string) (UserToken, error) {
+	row := q.db.QueryRow(ctx, getRefreshTokenByToken, refreshToken)
+	var i UserToken
+	err := row.Scan(
+		&i.TokenID,
+		&i.UserID,
+		&i.RefreshToken,
+		&i.ExpiresAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const storeRefreshToken = `-- name: StoreRefreshToken :exec
 INSERT INTO user_tokens (user_id, refresh_token, expires_at)
 VALUES ($1, $2, $3)
