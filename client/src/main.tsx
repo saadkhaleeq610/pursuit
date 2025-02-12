@@ -1,24 +1,57 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router";
-import "./index.css"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import "./index.css";
 import LoginPage from "./pages/Login";
 import DashboardPage from "./pages/Dashboard";
 import RegisterRestaurantPage from "./pages/RestaurantRegistrationPage";
 import SignupPage from "./pages/Signup";
-import {ProtectedRoute} from "./ProtectedRoute"; 
 import LandingPage from "./pages/LandingPage";
+import {ProtectedRoute}  from "./ProtectedRoute";
+import { useAuthStore } from "./store/useAuthStore";
+// import setupAxiosInterceptors from "./axiosInterceptor";
+
+// setupAxiosInterceptors();
+
+// PublicRoute: Only allows access if user is NOT authenticated
+const PublicRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuthStore();
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
+};
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/register-restaurant" element={<RegisterRestaurantPage />} />
 
+        {/* Public Routes Only for unauthenticated users */}
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignupPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register-restaurant"
+          element={
+            <PublicRoute>
+              <RegisterRestaurantPage />
+            </PublicRoute>
+          }
+        />
+
+        {/* Protected Route: Only for authenticated users */}
         <Route
           path="/dashboard"
           element={
@@ -28,6 +61,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           }
         />
 
+        {/* Catch-all for undefined routes */}
         <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>
     </BrowserRouter>

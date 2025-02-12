@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/saadkhaleeq610/pursuit/server/config"
 	db "github.com/saadkhaleeq610/pursuit/server/db/sqlc"
 	"github.com/saadkhaleeq610/pursuit/server/utils"
@@ -63,43 +62,6 @@ func RefreshTokenHandler(store *db.Queries) gin.HandlerFunc {
 			return
 		}
 
-		// Generate a new refresh token
-		newRefreshToken, err := utils.CreateRefreshToken(user.Email, user.UserID)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate refresh token"})
-			return
-		}
-
-		// Store the new refresh token in the database
-		err = store.StoreRefreshToken(c, db.StoreRefreshTokenParams{
-			UserID:       user.UserID,
-			RefreshToken: newRefreshToken,
-			ExpiresAt:    pgtype.Timestamp{Time: time.Now().Add(time.Hour * 24 * 7), Valid: true},
-		})
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store refresh token"})
-			return
-		}
-
-		// Delete the old refresh token
-		err = store.DeleteRefreshToken(c, refreshToken)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete old refresh token"})
-			return
-		}
-
-		// Set the new refresh token in an HTTP-only cookie
-		c.SetCookie(
-			"refresh_token",
-			newRefreshToken,
-			60*60*24*7, // 7 days
-			"/",
-			"",
-			false, // Secure (set to true in production with HTTPS)
-			true,
-		)
-
-		// Return the new access token
 		c.JSON(http.StatusOK, refreshTokenResponse{
 			AccessToken: accessToken,
 		})

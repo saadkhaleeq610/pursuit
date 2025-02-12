@@ -26,7 +26,7 @@ export default function DashboardPage() {
         <div className="space-y-4">
           <div>
             <Label className="text-gray-600">Email</Label>
-            <p className="text-lg font-medium">{email}</p>
+            <p className="text-lg font-medium">{}</p>
           </div>
           <Button onClick={logout} className="w-full bg-red-500 hover:bg-red-600">
             Logout

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,15 @@ export default function LoginPage() {
   const [formData, setFormData] = useState<FormDataType>({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
 
-  const { login } = useAuthStore();
+  const { login, accessToken } = useAuthStore();
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (accessToken) {
+      navigate("/dashboard");
+    }
+  }, [accessToken, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,7 +42,17 @@ export default function LoginPage() {
       console.log("Login successful:", response.data);
       navigate("/dashboard");
     } catch (error) {
-      setError("Invalid email or password. Please try again.");
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          setError(error.response.data.error || "An error occurred during login.");
+        } else if (error.request) {
+          setError("No response received from the server. Please try again.");
+        } else {
+          setError("An unexpected error occurred. Please try again.");
+        }
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
       console.error("Login error:", error);
     }
   };
