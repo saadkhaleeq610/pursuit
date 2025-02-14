@@ -8,6 +8,14 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Invite struct {
+	ID           int32
+	Email        string
+	RoleID       int32
+	RestaurantID int32
+	CreatedAt    pgtype.Timestamp
+}
+
 type Permission struct {
 	PermissionID   int32
 	PermissionName string
