@@ -88,3 +88,19 @@ func (q *Queries) GetUserById(ctx context.Context, userID int32) (User, error) {
 	)
 	return i, err
 }
+
+const updateUserRestaurantID = `-- name: UpdateUserRestaurantID :exec
+UPDATE users
+SET restaurant_id = $2
+WHERE user_id = $1
+`
+
+type UpdateUserRestaurantIDParams struct {
+	UserID       int32
+	RestaurantID pgtype.Int4
+}
+
+func (q *Queries) UpdateUserRestaurantID(ctx context.Context, arg UpdateUserRestaurantIDParams) error {
+	_, err := q.db.Exec(ctx, updateUserRestaurantID, arg.UserID, arg.RestaurantID)
+	return err
+}

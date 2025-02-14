@@ -16,3 +16,8 @@ WHERE email = $1;
 -- name: GetUserById :one
 SELECT * FROM users
 WHERE user_id = $1;
+
+-- name: UpdateUserRestaurantID :exec
+UPDATE users
+SET restaurant_id = $2
+WHERE user_id = $1;

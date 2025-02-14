@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/saadkhaleeq610/pursuit/server/db/sqlc"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +27,7 @@ func RegisterRestaurant(store *db.Queries) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req registerRestaurantRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error even before restaurant": err.Error()})
 			return
 		}
 
@@ -45,9 +46,21 @@ func RegisterRestaurant(store *db.Queries) gin.HandlerFunc {
 			PhoneNumber: req.PhoneNumber,
 			OwnerID:     userIDInt32,
 		})
-
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error in restaurant creation": err.Error()})
+			return
+		}
+
+		// ✅ Update user's restaurant_id after restaurant creation
+		err = store.UpdateUserRestaurantID(c, db.UpdateUserRestaurantIDParams{
+			UserID: userIDInt32,
+			RestaurantID: pgtype.Int4{
+				Int32: createRestaurant.RestaurantID,
+				Valid: true, // ✅ Now properly set
+			},
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user's restaurant_id"})
 			return
 		}
 
