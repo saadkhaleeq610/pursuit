@@ -51,12 +51,11 @@ func RegisterRestaurant(store *db.Queries) gin.HandlerFunc {
 			return
 		}
 
-		// ✅ Update user's restaurant_id after restaurant creation
 		err = store.UpdateUserRestaurantID(c, db.UpdateUserRestaurantIDParams{
 			UserID: userIDInt32,
 			RestaurantID: pgtype.Int4{
 				Int32: createRestaurant.RestaurantID,
-				Valid: true, // ✅ Now properly set
+				Valid: true,
 			},
 		})
 		if err != nil {

@@ -51,7 +51,7 @@ func main() {
 	r.POST("/restaurants", middleware.AuthMiddleware(), handlers.RegisterRestaurant(store))
 	r.POST("/logout", middleware.AuthMiddleware(), handlers.LogoutHandler(store))
 	r.POST("/refresh-token", handlers.RefreshTokenHandler(store))
-	r.POST("/invite-user", handlers.InviteUserHandler(store))
-	r.POST("/join-restaurant-staff", handlers.InviteUserHandler(store))
+	r.POST("/invite-user", middleware.AuthMiddleware(), handlers.InviteUserHandler(store))
+	r.POST("/join-restaurant-staff", middleware.AuthMiddleware(), handlers.InviteUserHandler(store))
 	r.Run(config.ServerAddress)
 }
