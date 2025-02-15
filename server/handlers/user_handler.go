@@ -47,8 +47,8 @@ func SignupHandler(store *db.Queries) gin.HandlerFunc {
 		}
 		// Check if the user already exists with this email
 		// Todo:Need to add email verifcation . We will add it later
-		existingUser, err := store.GetUserByEmail(c, req.Email)
-		if err == nil && existingUser.UserID > 0 {
+		_, err := store.GetUserByEmail(c, req.Email)
+		if err == nil {
 			c.JSON(http.StatusConflict, gin.H{"error": "User with this email already exists"})
 			return
 		}

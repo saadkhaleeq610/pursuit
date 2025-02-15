@@ -53,5 +53,6 @@ func main() {
 	r.POST("/refresh-token", handlers.RefreshTokenHandler(store))
 	r.POST("/invite-user", middleware.AuthMiddleware(), handlers.InviteUserHandler(store))
 	r.POST("/check-invite", handlers.CheckInviteHandler(store))
+	r.POST("/join-staff", handlers.JoinStaffHandler(store))
 	r.Run(config.ServerAddress)
 }

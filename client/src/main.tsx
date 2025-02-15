@@ -10,6 +10,7 @@ import LandingPage from "./pages/LandingPage";
 import {ProtectedRoute}  from "./ProtectedRoute";
 import { useAuthStore } from "./store/useAuthStore";
 import JoinRestaurant from "./pages/JoinStaff";
+import InviteUserPage from "./pages/InviteStaff";
 // import setupAxiosInterceptors from "./axiosInterceptor";
 
 // setupAxiosInterceptors();
@@ -66,6 +67,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invite-staff"
+          element={
+            <ProtectedRoute>
+              <InviteUserPage />
             </ProtectedRoute>
           }
         />

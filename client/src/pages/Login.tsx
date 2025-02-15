@@ -8,6 +8,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { ArrowLeft } from "phosphor-react";
+import { Link } from "react-router";
 
 export default function LoginPage() {
   type FormDataType = { email: string; password: string };
@@ -15,7 +17,6 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   const { login, accessToken } = useAuthStore();
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,7 +61,10 @@ export default function LoginPage() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
       <Card className="w-full max-w-md shadow-lg rounded-2xl">
-        <CardHeader>
+        <CardHeader className="relative">
+          <button onClick={() => navigate("/")} className="absolute left-4 top-4 p-2 text-gray-600 hover:text-black">
+            <ArrowLeft className="w-6 h-6" />
+          </button>
           <CardTitle className="text-center text-xl font-semibold">Login</CardTitle>
         </CardHeader>
         <CardContent>
@@ -89,6 +93,11 @@ export default function LoginPage() {
             </div>
             <Button type="submit" className="w-full">Login</Button>
           </form>
+          
+          <div className="text-center mt-4">
+            <span className="text-sm">Don't have an account? </span>
+            <Link to="/register" className="text-blue-600 hover:underline">Register</Link>
+          </div>
         </CardContent>
       </Card>
     </div>
