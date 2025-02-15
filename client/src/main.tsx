@@ -9,6 +9,7 @@ import SignupPage from "./pages/Signup";
 import LandingPage from "./pages/LandingPage";
 import {ProtectedRoute}  from "./ProtectedRoute";
 import { useAuthStore } from "./store/useAuthStore";
+import JoinRestaurant from "./pages/JoinStaff";
 // import setupAxiosInterceptors from "./axiosInterceptor";
 
 // setupAxiosInterceptors();
@@ -39,6 +40,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           element={
             <PublicRoute>
               <SignupPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/join-staff"
+          element={
+            <PublicRoute>
+              <JoinRestaurant />
             </PublicRoute>
           }
         />

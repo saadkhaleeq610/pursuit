@@ -56,6 +56,11 @@ export default function LandingPage() {
           <Button variant="ghost" className="text-[#011200]">
             Pricing
           </Button>
+          <Link to="/join-staff">
+            <Button variant="ghost" className="text-[#011200]">
+              Join a Restaurant Staff
+            </Button>
+          </Link>
           <Link to="/login">
             <Button variant="ghost" className="text-[#011200]">
               Login

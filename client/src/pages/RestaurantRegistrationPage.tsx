@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,8 +7,18 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 
 export default function RegisterRestaurantPage() {
-  type FormDataType = {name: string, address: string, phone: string}
+  type FormDataType = { name: string; address: string; phone: string };
   const [formData, setFormData] = useState<FormDataType>({ name: "", address: "", phone: "" });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    const hasRefreshToken = document.cookie.includes("refreshToken");
+    
+    if (!accessToken && !hasRefreshToken) {
+      navigate("/signup");
+    }
+  }, [navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,14 +28,10 @@ export default function RegisterRestaurantPage() {
     e.preventDefault();
     console.log("Restaurant Registration Data:", formData);
     try {
-      const response = await axios.post("http://localhost:8080/restaurants", {
-        name: formData.name,
-        address: formData.address,
-        phone: formData.phone,
-      });
+      const response = await axios.post("http://localhost:8080/restaurants", formData);
       console.log("Registration Successful: ", response.data);
     } catch (error) {
-      console.log("Error registring the restaurant: ", error);
+      console.log("Error registering the restaurant: ", error);
     }
   };
 
