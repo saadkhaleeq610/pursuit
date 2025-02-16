@@ -39,6 +39,8 @@ func RegisterRestaurant(store *db.Queries) gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			return
 		}
+
+		// At first we were asserting that userIF is
 		userIDInt32 := userID.(int32)
 
 		// Create restaurant

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -20,18 +21,19 @@ type joinStaffReq struct {
 	RestaurantId *int32 `json:"restaurant_id" binding:"required"`
 }
 
-type joinStaffResponse struct {
-	Name          string `json:name`
-	Email         string `json:"email"`
-	Role_Id       int32  `json:"role_id" `
-	Restaurant_Id int32  `json:"restaurant_id"`
-}
+// type joinStaffResponse struct {
+// 	Name          string `json:name`
+// 	Email         string `json:"email"`
+// 	Role_Id       int32  `json:"role_id" `
+// 	Restaurant_Id int32  `json:"restaurant_id"`
+// }
 
 func JoinStaffHandler(queries *db.Queries) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log.Print("I am here")
 		var req joinStaffReq
 		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error in binding": err.Error()})
 			return
 		}
 
@@ -47,6 +49,7 @@ func JoinStaffHandler(queries *db.Queries) gin.HandlerFunc {
 			restaurantId.Valid = true
 		}
 		// Create user in users table
+		log.Print("I am here 2")
 		user, err := queries.CreateUser(context.Background(), db.CreateUserParams{
 			Name:         req.Name,
 			Email:        req.Email,
@@ -55,6 +58,7 @@ func JoinStaffHandler(queries *db.Queries) gin.HandlerFunc {
 			RestaurantID: restaurantId,
 		})
 		if err != nil {
+			log.Print(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 			return
 		}
