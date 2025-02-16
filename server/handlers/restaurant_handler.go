@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/jackc/pgx/v5/pgtype"
@@ -25,6 +26,7 @@ type createRestaurantResponse struct {
 
 func RegisterRestaurant(store *db.Queries) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log.Print("I came here inside the resturant")
 		var req registerRestaurantRequest
 		if err := c.ShouldBindJSON(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error even before restaurant": err.Error()})
@@ -37,7 +39,7 @@ func RegisterRestaurant(store *db.Queries) gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 			return
 		}
-		userIDInt32 := int32(userID.(int))
+		userIDInt32 := userID.(int32)
 
 		// Create restaurant
 		createRestaurant, err := store.CreateRestaurant(c, db.CreateRestaurantParams{

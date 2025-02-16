@@ -12,6 +12,7 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		log.Print("I came here")
 		tokenString, err := c.Cookie("refresh_token")
 		if err != nil {
 			log.Printf("Cookie error: %v", err) // Log the cookie error

@@ -16,7 +16,7 @@ export default function InviteUserPage() {
     setError("");
     
     try {
-        const response = await axios.post("http://localhost:8080/invite-staff", {
+        const response = await axios.post("http://localhost:8080/invite-user", {
             email,
             role_id: 3, // Replace with the appropriate role ID
           });

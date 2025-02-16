@@ -35,8 +35,9 @@ export default function SignupPage() {
         role_id: 1,
       });
       
-      if (response.status === 201) {
-        navigate("/register-restaurant");
+      if (response.status === 201) {  
+        console.log("I am here")
+        navigate("/login");
       }
     } catch (error: any) {
       setError(error.response?.data?.error || "Signup failed. Please try again.");
