@@ -26,7 +26,8 @@ export default function JoinRestaurant() {
     setError(null);
     try {
       const response = await axios.post("http://localhost:8080/check-invite", { email });
-      setInvite(response.data); // Store invite data
+      setInvite(response.data);
+      console.log(response.data); // Store invite data
     } catch (error: any) {
       setError(error.response?.data?.message || "Failed to check invite.");
     }

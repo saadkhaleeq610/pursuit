@@ -7,3 +7,6 @@ INSERT INTO restaurants (
 ) VALUES (
     $1, $2, $3, $4
 ) RETURNING *;
+
+-- name: GetRestaurantName :one
+SELECT name FROM restaurants WHERE restaurant_id = $1;

@@ -13,9 +13,10 @@ type checkInviteReq struct {
 }
 
 type checkInviteResponse struct {
-	Email         string `json:"email"`
-	Role_Id       int32  `json:"role_id" `
-	Restaurant_Id int32  `json:"restaurant_id"`
+	Email          string `json:"email"`
+	Role_Id        int32  `json:"role_id" `
+	Restaurant_Id  int32  `json:"restaurant_id"`
+	RestaurantName string `json:"restaurant_name"`
 }
 
 func CheckInviteHandler(queries *db.Queries) gin.HandlerFunc {
@@ -33,11 +34,17 @@ func CheckInviteHandler(queries *db.Queries) gin.HandlerFunc {
 			c.JSON(http.StatusNotFound, gin.H{"error": "No invite found for this email"})
 			return
 		}
+		restaurantName, err := queries.GetRestaurantName(context.Background(), invite.RestaurantID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve restaurant name"})
+			return
+		}
 
 		c.JSON(http.StatusOK, checkInviteResponse{
-			Email:         invite.Email,
-			Role_Id:       invite.RoleID,
-			Restaurant_Id: invite.RestaurantID,
+			Email:          invite.Email,
+			Role_Id:        invite.RoleID,
+			Restaurant_Id:  invite.RestaurantID,
+			RestaurantName: restaurantName,
 		})
 	}
 }
