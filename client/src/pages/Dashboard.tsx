@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router";
 
 export default function DashboardPage() {
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout, restaurant } = useAuthStore();
 
   // If the user is not authenticated, redirect to the login page
   if (!isAuthenticated) {
@@ -20,16 +20,19 @@ export default function DashboardPage() {
     );
   }
 
+  if(restaurant == null){
+
+  return(
+    <div className="flex flex-col items-center pt-60 justify-center">
+      <Link to="/register-restaurant">
+        <Button>Create Your Restaurant</Button>
+      </Link>
+    </div>
+  )
+
+  }
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
-      {/* Navigation */}
-      <nav className="w-full bg-white shadow-md p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">Dashboard</h1>
-        <Link to="/invite-staff" className="text-white">
-          <Button className="bg-blue-500 hover:bg-blue-600">Invite user to your staff</Button>
-        </Link>
-      </nav>
-      
+    <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">      
       {/* Main Content */}
       <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 mt-6">
         <h1 className="text-2xl font-semibold text-center mb-6">Dashboard</h1>
@@ -45,4 +48,5 @@ export default function DashboardPage() {
       </div>
     </div>
   );
+// }
 }

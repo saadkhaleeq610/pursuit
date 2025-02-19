@@ -2,6 +2,8 @@ import { create } from "zustand";
 import axios from "axios";
 
 type AuthState = {
+  //user: {name: string, email: string, user_id: int, role_id: int, role_name: }
+  restaurant: {name: string, address: string, phone_number: string} | null;
   email: string;
   accessToken: string | null;
   isAuthenticated: boolean;
@@ -12,6 +14,7 @@ type AuthState = {
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
+  restaurant: null,
   email: localStorage.getItem("email") || "",
   accessToken: localStorage.getItem("accessToken") || null,
   isAuthenticated: !!localStorage.getItem("accessToken"),

@@ -11,6 +11,9 @@ import {ProtectedRoute}  from "./ProtectedRoute";
 import { useAuthStore } from "./store/useAuthStore";
 import JoinRestaurant from "./pages/JoinStaff";
 import InviteUserPage from "./pages/InviteStaff";
+import Profile from "./pages/Profile";
+import RestaurantDetails from "./pages/RestaurantDetails";
+import Settings from "./pages/Settings";
 // import setupAxiosInterceptors from "./axiosInterceptor";
 
 // setupAxiosInterceptors();
@@ -27,7 +30,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path="/" element={<LandingPage />} />
 
-        {/* Public Routes Only for unauthenticated users */}
         <Route
           path="/login"
           element={
@@ -52,16 +54,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </PublicRoute>
           }
         />
-        <Route
-          path="/register-restaurant"
-          element={
-            <PublicRoute>
-              <RegisterRestaurantPage />
-            </PublicRoute>
-          }
-        />
 
-        {/* Protected Route: Only for authenticated users */}
         <Route
           path="/dashboard"
           element={
@@ -70,6 +63,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </ProtectedRoute>
           }
         />
+          <Route
+            path="/register-restaurant"
+            element={
+              <ProtectedRoute>
+                <RegisterRestaurantPage />
+              </ProtectedRoute>
+            }
+          />
         <Route
           path="/invite-staff"
           element={
@@ -78,8 +79,31 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/restaurant-details"
+          element={
+            <ProtectedRoute>
+              <RestaurantDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Catch-all for undefined routes */}
         <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>
     </BrowserRouter>
