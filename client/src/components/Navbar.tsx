@@ -32,19 +32,19 @@ const Navbar: FC<NavbarProps> = ({ logoText, className }) => {
   }, []);
 
   return (
-    <nav className={cn("fixed w-full flex items-center justify-between px-6 py-4 bg-white shadow-md", className)}>
+    <nav className={cn("fixed w-full flex items-center justify-between px-6 py-4 bg-white shadow-lg shadow-white", className)}>
       {/* Logo */}
       <Link to="/dashboard">
       <div className="text-xl font-semibold">{logoText}</div>
       </Link>
 
        {/* Right Section  */}
-      <div className="flex items-center gap-4 relative">
+      <div className="flex items-center gap-10 relative">
         {/* Settings Icon */}
         <div className="relative" ref={settingsRef}>
           <Gear
-            size={24}
-            className="cursor-pointer text-gray-600 hover:text-gray-800"
+            size={30}
+            className="cursor-pointer text-black hover:text-gray-800"
             onClick={() => setShowSettingsMenu((prev) => !prev)}
           />
           {showSettingsMenu && (
@@ -59,8 +59,8 @@ const Navbar: FC<NavbarProps> = ({ logoText, className }) => {
         {/* Profile Icon */}
         <div className="relative" ref={profileRef}>
           <UserCircle
-            size={28}
-            className="cursor-pointer text-gray-600 hover:text-gray-800"
+            size={34}
+            className="cursor-pointer text-black hover:text-gray-800"
             onClick={() => setShowProfileMenu((prev) => !prev)}
           />
           {showProfileMenu && (

@@ -4,21 +4,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { Link } from "react-router";
 
 export default function DashboardPage() {
-  const { isAuthenticated, logout, restaurant } = useAuthStore();
-
-  // If the user is not authenticated, redirect to the login page
-  if (!isAuthenticated) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-        <div className="text-center">
-          <h1 className="text-2xl font-semibold mb-4">You are not logged in.</h1>
-          <a href="/login" className="text-blue-500 hover:underline">
-            Go to Login
-          </a>
-        </div>
-      </div>
-    );
-  }
+  const {  logout, restaurant } = useAuthStore();
 
   if(restaurant == null){
 
@@ -32,7 +18,7 @@ export default function DashboardPage() {
 
   }
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">      
+    <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4 pt-30">      
       {/* Main Content */}
       <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 mt-6">
         <h1 className="text-2xl font-semibold text-center mb-6">Dashboard</h1>
