@@ -14,7 +14,7 @@ type AuthState = {
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  restaurant: null,
+  restaurant: {name: "chezious", address: "g11", phone_number: "23123312"},
   email: localStorage.getItem("email") || "",
   accessToken: localStorage.getItem("accessToken") || null,
   isAuthenticated: !!localStorage.getItem("accessToken"),

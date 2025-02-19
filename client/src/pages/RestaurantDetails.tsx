@@ -1,28 +1,32 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const RestaurantDetails = () => {
+  const { restaurant } = useAuthStore();
+
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Restaurant Details</h1>
+    <div className="max-w-lg mx-auto mt-10 p-8 bg-white shadow-md rounded-lg">
+      <h1 className="text-3xl font-semibold mb-6 text-center">Restaurant Details</h1>
 
-      <div className="space-y-3">
-        <Label>Restaurant Name</Label>
-        <Input type="text" placeholder="Enter restaurant name" />
-      </div>
+      {restaurant ? (
+        <div className="space-y-5 text-lg">
+          <div className="flex justify-between border-b pb-2">
+            <span className="font-medium text-gray-600">Name:</span>
+            <span className="text-gray-800">{restaurant.name}</span>
+          </div>
 
-      <div className="space-y-3">
-        <Label>Address</Label>
-        <Input type="text" placeholder="Enter address" />
-      </div>
+          <div className="flex justify-between border-b pb-2">
+            <span className="font-medium text-gray-600">Address:</span>
+            <span className="text-gray-800">{restaurant.address}</span>
+          </div>
 
-      <div className="space-y-3">
-        <Label>Phone Number</Label>
-        <Input type="tel" placeholder="Enter phone number" />
-      </div>
-
-      <Button className="mt-4 w-full">Update Details</Button>
+          <div className="flex justify-between">
+            <span className="font-medium text-gray-600">Phone:</span>
+            <span className="text-gray-800">{restaurant.phone_number}</span>
+          </div>
+        </div>
+      ) : (
+        <p className="text-gray-500 text-center">No restaurant details available.</p>
+      )}
     </div>
   );
 };
