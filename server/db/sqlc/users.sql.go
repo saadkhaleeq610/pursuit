@@ -109,6 +109,40 @@ func (q *Queries) GetUserById(ctx context.Context, userID int32) (User, error) {
 	return i, err
 }
 
+const getUserWithRole = `-- name: GetUserWithRole :one
+SELECT 
+    u.user_id, u.name, u.email, u.password, u.role_id, u.restaurant_id,
+    r.role_name
+FROM users u
+JOIN roles r ON u.role_id = r.role_id
+WHERE u.user_id = $1
+`
+
+type GetUserWithRoleRow struct {
+	UserID       int32
+	Name         string
+	Email        string
+	Password     string
+	RoleID       int32
+	RestaurantID pgtype.Int4
+	RoleName     string
+}
+
+func (q *Queries) GetUserWithRole(ctx context.Context, userID int32) (GetUserWithRoleRow, error) {
+	row := q.db.QueryRow(ctx, getUserWithRole, userID)
+	var i GetUserWithRoleRow
+	err := row.Scan(
+		&i.UserID,
+		&i.Name,
+		&i.Email,
+		&i.Password,
+		&i.RoleID,
+		&i.RestaurantID,
+		&i.RoleName,
+	)
+	return i, err
+}
+
 const updateUserRestaurantID = `-- name: UpdateUserRestaurantID :exec
 UPDATE users
 SET restaurant_id = $2

@@ -113,12 +113,19 @@ func SignupHandler(store *db.Queries) gin.HandlerFunc {
 			true,
 			true, // httpOnly
 		)
+		userWithRole, err := store.GetUserWithRole(c, user.UserID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user details"})
+			return
+		}
+
 		response := createUserResponse{
-			UserID:       user.UserID,
-			Name:         user.Name,
-			Email:        user.Email,
-			RoleID:       user.RoleID,
-			RestaurantID: user.RestaurantID,
+			UserID:       userWithRole.UserID,
+			Name:         userWithRole.Name,
+			Email:        userWithRole.Email,
+			RoleID:       userWithRole.RoleID,
+			RoleName:     userWithRole.RoleName,
+			RestaurantID: userWithRole.RestaurantID,
 			AccessToken:  accessToken,
 		}
 		c.JSON(http.StatusCreated, response)

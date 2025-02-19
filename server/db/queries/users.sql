@@ -31,3 +31,11 @@ WHERE user_id = $1;
 UPDATE users
 SET restaurant_id = $2
 WHERE user_id = $1;
+
+-- name: GetUserWithRole :one
+SELECT 
+    u.*,
+    r.role_name
+FROM users u
+JOIN roles r ON u.role_id = r.role_id
+WHERE u.user_id = $1;
