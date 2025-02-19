@@ -23,6 +23,7 @@ type createUserResponse struct {
 	Name         string      `json:"name"`
 	Email        string      `json:"email"`
 	RoleID       int32       `json:"role_id"`
+	RoleName     string      `json:"role_name"`
 	RestaurantID pgtype.Int4 `json:"restaurant_id,omitempty"`
 	AccessToken  string      `json:"access_token"`
 }
@@ -34,8 +35,12 @@ type authUserRequest struct {
 
 type authUserResponse struct {
 	Email        string `json:"email"`
+	Name         string `json:"name"`
+	UserID       int32  `json:"user_id"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+	RestaurantID int    `json:"restaurant_id"`
+	RoleName     string `json:"role_name"`
 }
 
 func SignupHandler(store *db.Queries) gin.HandlerFunc {
@@ -178,6 +183,10 @@ func LoginHandler(auth *db.Queries) gin.HandlerFunc {
 			Email:        existingUser.Email,
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
+			RoleName:     existingUser.RoleName,
+			Name:         existingUser.Name,
+			UserID:       existingUser.UserID,
+			RestaurantID: int(existingUser.RestaurantID.Int32),
 		})
 	}
 }

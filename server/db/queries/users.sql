@@ -10,8 +10,18 @@ INSERT INTO users (
 ) RETURNING *;
 
 -- name: GetUserByEmail :one
-SELECT * FROM users
-WHERE email = $1;
+SELECT 
+    u.user_id, 
+    u.name, 
+    u.email, 
+    u.password, 
+    u.role_id, 
+    r.role_name,  
+    u.restaurant_id
+FROM users u
+JOIN roles r ON u.role_id = r.role_id
+WHERE u.email = $1;
+
 
 -- name: GetUserById :one
 SELECT * FROM users
