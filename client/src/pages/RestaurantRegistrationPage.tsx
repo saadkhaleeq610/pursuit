@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 export default function RegisterRestaurantPage() {
   const { regRestaurant, accessToken } = useAuthStore();
   const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
@@ -31,9 +33,11 @@ export default function RegisterRestaurantPage() {
   });
 
   const onSubmit = async (data: { name: string; address: string; phone_number: string }) => {
+    setSuccessMessage(null); // Clear previous success message
     console.log("Restaurant Registration Data:", data);
+
     try {
-      const response = await axios.post("http://localhost:8080/restaurants", data, {
+      const response = await axios.post("http://localhost:8080/register-restaurant", data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -42,6 +46,11 @@ export default function RegisterRestaurantPage() {
 
       const { name, address, phone_number } = response.data;
       regRestaurant({ name, address, phone_number });
+
+      setSuccessMessage("Restaurant registered successfully!");
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 100); // Redirect after 2 seconds
     } catch (error) {
       console.log("Error registering the restaurant: ", error);
     }
@@ -54,6 +63,7 @@ export default function RegisterRestaurantPage() {
           <CardTitle className="text-center text-xl font-semibold">Register Your Restaurant</CardTitle>
         </CardHeader>
         <CardContent>
+          {successMessage && <p className="text-green-600 text-center mb-2">{successMessage}</p>}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <Label htmlFor="name">Restaurant Name</Label>

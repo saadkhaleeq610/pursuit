@@ -45,6 +45,23 @@ func (q *Queries) CreateRestaurant(ctx context.Context, arg CreateRestaurantPara
 	return i, err
 }
 
+const getRestaurantDetails = `-- name: GetRestaurantDetails :one
+SELECT restaurant_id, name, address, phone_number, owner_id FROM restaurants WHERE restaurant_id = $1
+`
+
+func (q *Queries) GetRestaurantDetails(ctx context.Context, restaurantID int32) (Restaurant, error) {
+	row := q.db.QueryRow(ctx, getRestaurantDetails, restaurantID)
+	var i Restaurant
+	err := row.Scan(
+		&i.RestaurantID,
+		&i.Name,
+		&i.Address,
+		&i.PhoneNumber,
+		&i.OwnerID,
+	)
+	return i, err
+}
+
 const getRestaurantName = `-- name: GetRestaurantName :one
 SELECT name FROM restaurants WHERE restaurant_id = $1
 `

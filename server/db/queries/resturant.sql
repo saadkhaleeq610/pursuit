@@ -10,3 +10,6 @@ INSERT INTO restaurants (
 
 -- name: GetRestaurantName :one
 SELECT name FROM restaurants WHERE restaurant_id = $1;
+
+-- name: GetRestaurantDetails :one
+SELECT * FROM restaurants WHERE restaurant_id = $1;

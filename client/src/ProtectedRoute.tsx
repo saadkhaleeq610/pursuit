@@ -3,7 +3,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import Navbar from "@/components/Navbar";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, restaurant } = useAuthStore();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -11,8 +11,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div>
-      <Navbar logoText="Pursuit" />
-      <main className="py-12">{children}</main>
+      <Navbar logoText={restaurant?.name || "Pursuit"} />
+      <main className="py-20">{children}</main>
     </div>
   );
 };

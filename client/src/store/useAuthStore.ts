@@ -7,6 +7,7 @@ type User = {
   user_id: number;
   role_id: number;
   role_name: string;
+  restaurant_id: number;
 };
 
 type Restaurant = {
@@ -25,27 +26,59 @@ type AuthState = {
   logout: () => void;
   refreshAccessToken: () => Promise<string | null>;
   validateToken: () => Promise<boolean>;
+  getRestaurantDetails: (restaurant_id: number) => Promise<void>;
+};
+
+// Helper function for safe JSON parsing
+const safeParse = (key: string) => {
+  try {
+    return JSON.parse(localStorage.getItem(key) || "null");
+  } catch {
+    return null;
+  }
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  user: JSON.parse(localStorage.getItem("user") || "null"),
-  restaurant: JSON.parse(localStorage.getItem("restaurant") || "null"),
+  user: safeParse("user"),
+  restaurant: safeParse("restaurant"),
   accessToken: localStorage.getItem("accessToken") || null,
   isAuthenticated: !!localStorage.getItem("accessToken"),
 
-  login: (user, token) => {
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("accessToken", token);
-    set({ user, accessToken: token, isAuthenticated: true });
-  },
-
   regRestaurant: (restaurant) => {
-    localStorage.setItem("restaurnat", JSON.stringify(restaurant))
+    localStorage.setItem("restaurant", JSON.stringify(restaurant));
+    set({ restaurant });
   },
 
   logout: () => {
     localStorage.clear();
     set({ user: null, restaurant: null, accessToken: null, isAuthenticated: false });
+  },
+
+  getRestaurantDetails: async (restaurant_id: number) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/restaurant-details",
+        { restaurant_id }, 
+        { withCredentials: true }
+      );
+
+      const restaurant = response.data;
+      localStorage.setItem("restaurant", JSON.stringify(restaurant));
+      set({ restaurant });
+    } catch (error) { 
+      console.error("Fetching restaurant details failed:", error);
+    }
+  },
+
+  login: async (user, token) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("accessToken", token);
+    
+    set({ user, accessToken: token, isAuthenticated: true });
+
+    if (user.restaurant_id != null &&  user.restaurant_id != 0) {
+      await get().getRestaurantDetails(user.restaurant_id);
+    }
   },
 
   refreshAccessToken: async () => {

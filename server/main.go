@@ -55,7 +55,8 @@ func main() {
 
 	r.POST("/signup", handlers.SignupHandler(store))
 	r.POST("/login", handlers.LoginHandler(store))
-	r.POST("/restaurants", middleware.AuthMiddleware(), handlers.RegisterRestaurant(store))
+	r.POST("/register-restaurant", middleware.AuthMiddleware(), handlers.RegisterRestaurant(store))
+	r.POST("/restaurant-details", middleware.AuthMiddleware(), handlers.GetRestaurantDetails(store))
 	r.POST("/logout", middleware.AuthMiddleware(), handlers.LogoutHandler(store))
 	r.POST("/refresh-token", handlers.RefreshTokenHandler(store))
 	r.POST("/invite-user", middleware.AuthMiddleware(), handlers.InviteUserHandler(store))

@@ -24,6 +24,18 @@ type createRestaurantResponse struct {
 	OwnerID     int32  `json:"owner_id"`
 }
 
+type getRestDetailsRequest struct {
+	RestaurantID int32 `json:"restaurant_id" binding:"required"`
+}
+
+type getRestDetailsResponse struct {
+	RestaurantID int32  `json:"id"`
+	Name         string `json:"name"`
+	Address      string `json:"address"`
+	PhoneNumber  string `json:"phone_number"`
+	OwnerID      int32  `json:"owner_id"`
+}
+
 func RegisterRestaurant(store *db.Queries) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		log.Println("📌 [INFO] Entered RegisterRestaurant handler")
@@ -93,6 +105,41 @@ func RegisterRestaurant(store *db.Queries) gin.HandlerFunc {
 			Address:     createRestaurant.Address,
 			PhoneNumber: createRestaurant.PhoneNumber,
 			OwnerID:     createRestaurant.OwnerID,
+		})
+	}
+}
+
+func GetRestaurantDetails(store *db.Queries) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		log.Println("📌 [INFO] Entered GetRestaurantDetails handler")
+
+		// Parse request body
+		var req getRestDetailsRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			log.Printf("❌ [ERROR] Failed to bind JSON: %v", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		log.Printf("✅ [DEBUG] Parsed request: %+v", req)
+
+		// Fetch restaurant details from database
+		log.Println("📌 [INFO] Fetching restaurant details from DB...")
+		restaurant, err := store.GetRestaurantDetails(c, req.RestaurantID)
+		if err != nil {
+			log.Printf("❌ [ERROR] Failed to get restaurant details: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get restaurant details"})
+			return
+		}
+		log.Printf("✅ [DEBUG] Fetched restaurant details: %+v", restaurant)
+
+		// Return response
+		log.Println("📌 [INFO] Sending success response")
+		c.JSON(http.StatusOK, getRestDetailsResponse{
+			RestaurantID: restaurant.RestaurantID,
+			Name:         restaurant.Name,
+			Address:      restaurant.Address,
+			PhoneNumber:  restaurant.PhoneNumber,
+			OwnerID:      restaurant.OwnerID,
 		})
 	}
 }
