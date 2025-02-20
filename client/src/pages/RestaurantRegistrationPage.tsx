@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,10 +9,8 @@ import axios from "axios";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export default function RegisterRestaurantPage() {
-  type FormDataType = { name: string; address: string; phone_number: string };
-  const [formData, setFormData] = useState<FormDataType>({ name: "", address: "", phone_number: "" });
-  const navigate = useNavigate();
   const { regRestaurant, accessToken } = useAuthStore();
+  const navigate = useNavigate();
   axios.defaults.withCredentials = true;
 
   useEffect(() => {
@@ -23,30 +22,26 @@ export default function RegisterRestaurantPage() {
     }
   }, [navigate]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      name: "",
+      address: "",
+      phone_number: ""
+    }
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Restaurant Registration Data:", formData);
+  const onSubmit = async (data: { name: string; address: string; phone_number: string }) => {
+    console.log("Restaurant Registration Data:", data);
     try {
-      const response = await axios.post("http://localhost:8080/restaurants", formData, {
+      const response = await axios.post("http://localhost:8080/restaurants", data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
       console.log("Registration Successful: ", response.data);
 
-      const {
-        name, address, phone_number
-      } = response.data;
-
-      const restaurantData = {
-        name, address, phone_number
-      }
-      regRestaurant(restaurantData)
-      console.log(restaurantData)
+      const { name, address, phone_number } = response.data;
+      regRestaurant({ name, address, phone_number });
     } catch (error) {
       console.log("Error registering the restaurant: ", error);
     }
@@ -59,18 +54,21 @@ export default function RegisterRestaurantPage() {
           <CardTitle className="text-center text-xl font-semibold">Register Your Restaurant</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <Label htmlFor="name">Restaurant Name</Label>
-              <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
+              <Input id="name" {...register("name", { required: "Restaurant name is required" })} />
+              {errors.name && <p className="text-red-500">{errors.name.message}</p>}
             </div>
             <div>
               <Label htmlFor="address">Address</Label>
-              <Input id="address" name="address" value={formData.address} onChange={handleChange} required />
+              <Input id="address" {...register("address", { required: "Address is required" })} />
+              {errors.address && <p className="text-red-500">{errors.address.message}</p>}
             </div>
             <div>
               <Label htmlFor="phone">Phone Number</Label>
-              <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} required />
+              <Input id="phone" {...register("phone_number", { required: "Phone number is required" })} />
+              {errors.phone_number && <p className="text-red-500">{errors.phone_number.message}</p>}
             </div>
             <Button type="submit" className="w-full">Register</Button>
           </form>

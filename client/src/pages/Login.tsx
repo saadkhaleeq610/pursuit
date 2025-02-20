@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,9 +14,7 @@ import { Link } from "react-router";
 
 export default function LoginPage() {
   type FormDataType = { email: string; password: string };
-  const [formData, setFormData] = useState<FormDataType>({ email: "", password: "" });
-  const [error, setError] = useState<string | null>(null);
-
+  const { register, handleSubmit, setError, formState: { errors } } = useForm<FormDataType>();
   const { login, accessToken } = useAuthStore();
   const navigate = useNavigate();
 
@@ -25,20 +24,10 @@ export default function LoginPage() {
     }
   }, [accessToken, navigate]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-  
+  const onSubmit = async (data: FormDataType) => {
     try {
-      const response = await axios.post("http://localhost:8080/login", {
-        email: formData.email,
-        password: formData.password,
-      });
-    
+      const response = await axios.post("http://localhost:8080/login", data);
+      
       const {
         email,
         name,
@@ -49,38 +38,22 @@ export default function LoginPage() {
         refresh_token,
         access_token,
       } = response.data;
-  
-      const userObj = {
-        email,
-        name,
-        user_id,
-        role_id,
-        role_name,
-        restaurant_id,
-        refresh_token,
-      };
-  
+
+      const userObj = { email, name, user_id, role_id, role_name, restaurant_id, refresh_token };
       login(userObj, access_token);
-      console.log("I GOT DATA:", userObj, "Access Token:", access_token);
       navigate("/dashboard");
     } catch (error) {
-      console.error("Login error:", error);
-  
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          setError(error.response.data.error || "An error occurred during login.");
-        } else if (error.request) {
-          setError("No response received from the server. Please try again.");
+          setError("email", { message: error.response.data.error || "An error occurred during login." });
         } else {
-          setError("An unexpected error occurred. Please try again.");
+          setError("email", { message: "No response received from the server. Please try again." });
         }
       } else {
-        setError(error.message || "An unexpected error occurred. Please try again.");
+        setError("email", { message: "An unexpected error occurred. Please try again." });
       }
     }
   };
-  
-  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
@@ -92,28 +65,25 @@ export default function LoginPage() {
           <CardTitle className="text-center text-xl font-semibold">Login</CardTitle>
         </CardHeader>
         <CardContent>
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="mb-4"
-            >
+          {errors.email && (
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mb-4">
               <Alert variant="destructive">
                 <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription>{errors.email.message}</AlertDescription>
               </Alert>
             </motion.div>
           )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+          
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+              <Input id="email" type="email" {...register("email", { required: "Email is required" })} />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
             </div>
             <div>
               <Label htmlFor="password">Password</Label>
-              <Input id="password" name="password" type="password" value={formData.password} onChange={handleChange} required />
+              <Input id="password" type="password" {...register("password", { required: "Password is required" })} />
+              {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
             </div>
             <Button type="submit" className="w-full">Login</Button>
           </form>
