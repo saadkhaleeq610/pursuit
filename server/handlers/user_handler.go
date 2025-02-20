@@ -41,6 +41,7 @@ type authUserResponse struct {
 	RefreshToken string `json:"refresh_token"`
 	RestaurantID int    `json:"restaurant_id"`
 	RoleName     string `json:"role_name"`
+	RoleID       int32  `json:"role_id"`
 }
 
 func SignupHandler(store *db.Queries) gin.HandlerFunc {
@@ -190,6 +191,7 @@ func LoginHandler(auth *db.Queries) gin.HandlerFunc {
 			Email:        existingUser.Email,
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
+			RoleID:       existingUser.RoleID,
 			RoleName:     existingUser.RoleName,
 			Name:         existingUser.Name,
 			UserID:       existingUser.UserID,

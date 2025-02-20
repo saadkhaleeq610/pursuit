@@ -14,11 +14,14 @@ import InviteUserPage from "./pages/InviteStaff";
 import Profile from "./pages/Profile";
 import RestaurantDetails from "./pages/RestaurantDetails";
 import Settings from "./pages/Settings";
+import axios from "axios";
 // import setupAxiosInterceptors from "./axiosInterceptor";
 
 // setupAxiosInterceptors();
 
 // PublicRoute: Only allows access if user is NOT authenticated
+axios.defaults.withCredentials = true;
+
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuthStore();
   return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;

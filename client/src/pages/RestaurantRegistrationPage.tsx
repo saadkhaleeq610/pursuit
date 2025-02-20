@@ -5,11 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function RegisterRestaurantPage() {
-  type FormDataType = { name: string; address: string; phone: string };
-  const [formData, setFormData] = useState<FormDataType>({ name: "", address: "", phone: "" });
+  type FormDataType = { name: string; address: string; phone_number: string };
+  const [formData, setFormData] = useState<FormDataType>({ name: "", address: "", phone_number: "" });
   const navigate = useNavigate();
+  const { regRestaurant, accessToken } = useAuthStore();
+  axios.defaults.withCredentials = true;
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -28,8 +31,22 @@ export default function RegisterRestaurantPage() {
     e.preventDefault();
     console.log("Restaurant Registration Data:", formData);
     try {
-      const response = await axios.post("http://localhost:8080/restaurants", formData);
+      const response = await axios.post("http://localhost:8080/restaurants", formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       console.log("Registration Successful: ", response.data);
+
+      const {
+        name, address, phone_number
+      } = response.data;
+
+      const restaurantData = {
+        name, address, phone_number
+      }
+      regRestaurant(restaurantData)
+      console.log(restaurantData)
     } catch (error) {
       console.log("Error registering the restaurant: ", error);
     }

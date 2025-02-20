@@ -32,17 +32,40 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-
+  
     try {
       const response = await axios.post("http://localhost:8080/login", {
         email: formData.email,
         password: formData.password,
       });
-
-      login(response.data.email, response.data.accessToken);
-      console.log("Login successful:", response.data);
+    
+      const {
+        email,
+        name,
+        user_id,
+        role_id,
+        role_name,
+        restaurant_id,
+        refresh_token,
+        access_token,
+      } = response.data;
+  
+      const userObj = {
+        email,
+        name,
+        user_id,
+        role_id,
+        role_name,
+        restaurant_id,
+        refresh_token,
+      };
+  
+      login(userObj, access_token);
+      console.log("I GOT DATA:", userObj, "Access Token:", access_token);
       navigate("/dashboard");
     } catch (error) {
+      console.error("Login error:", error);
+  
       if (axios.isAxiosError(error)) {
         if (error.response) {
           setError(error.response.data.error || "An error occurred during login.");
@@ -52,11 +75,12 @@ export default function LoginPage() {
           setError("An unexpected error occurred. Please try again.");
         }
       } else {
-        setError("An unexpected error occurred. Please try again.");
+        setError(error.message || "An unexpected error occurred. Please try again.");
       }
-      console.error("Login error:", error);
     }
   };
+  
+  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
@@ -96,7 +120,7 @@ export default function LoginPage() {
           
           <div className="text-center mt-4">
             <span className="text-sm">Don't have an account? </span>
-            <Link to="/register" className="text-blue-600 hover:underline">Register</Link>
+            <Link to="/signup" className="text-blue-600 hover:underline">Register</Link>
           </div>
         </CardContent>
       </Card>

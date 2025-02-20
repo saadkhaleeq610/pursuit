@@ -1,33 +1,51 @@
 import { create } from "zustand";
 import axios from "axios";
 
-type AuthState = {
-  //user: {name: string, email: string, user_id: int, role_id: int, role_name: }
-  restaurant: {name: string, address: string, phone_number: string} | null;
+type User = {
+  name: string;
   email: string;
+  user_id: number;
+  role_id: number;
+  role_name: string;
+};
+
+type Restaurant = {
+  name: string;
+  address: string;
+  phone_number: string;
+};
+
+type AuthState = {
+  user: User | null;
+  restaurant: Restaurant | null;
   accessToken: string | null;
   isAuthenticated: boolean;
-  login: (email: string, token: string) => void;
+  login: (user: User, token: string) => void;
+  regRestaurant: (restaurant: Restaurant) => void;
   logout: () => void;
   refreshAccessToken: () => Promise<string | null>;
   validateToken: () => Promise<boolean>;
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  restaurant: {name: "chezious", address: "g11", phone_number: "23123312"},
-  email: localStorage.getItem("email") || "",
+  user: JSON.parse(localStorage.getItem("user") || "null"),
+  restaurant: JSON.parse(localStorage.getItem("restaurant") || "null"),
   accessToken: localStorage.getItem("accessToken") || null,
   isAuthenticated: !!localStorage.getItem("accessToken"),
 
-  login: (email, token) => {
-    localStorage.setItem("email", email);
+  login: (user, token) => {
+    localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("accessToken", token);
-    set({ email, accessToken: token, isAuthenticated: true });
+    set({ user, accessToken: token, isAuthenticated: true });
+  },
+
+  regRestaurant: (restaurant) => {
+    localStorage.setItem("restaurnat", JSON.stringify(restaurant))
   },
 
   logout: () => {
     localStorage.clear();
-    set({ email: "", accessToken: null, isAuthenticated: false });
+    set({ user: null, restaurant: null, accessToken: null, isAuthenticated: false });
   },
 
   refreshAccessToken: async () => {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,12 +7,20 @@ import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { ArrowLeft } from "phosphor-react";
 import { Link } from "react-router";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function SignupPage() {
   type FormDataType = { name: string; email: string; password: string };
   const [formData, setFormData] = useState<FormDataType>({ name: "", email: "", password: "" });
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+  const { login, accessToken } = useAuthStore();
+
+  useEffect(() => {
+      if (accessToken) {
+        navigate("/dashboard");
+      }
+    }, [accessToken, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,10 +43,26 @@ export default function SignupPage() {
         role_id: 1,
       });
       
-      if (response.status === 201) {  
-        console.log("I am here")
-        navigate("/login");
-      }
+      const {
+        email,
+        name,
+        user_id,
+        role_id,
+        role_name,
+        restaurant_id,
+        access_token,
+      } = response.data;
+  
+      const userObj = {
+        email,
+        name,
+        user_id,
+        role_id,
+        role_name,
+        restaurant_id,
+      };
+  
+      login(userObj, access_token);
     } catch (error: any) {
       setError(error.response?.data?.error || "Signup failed. Please try again.");
       console.log(error)
