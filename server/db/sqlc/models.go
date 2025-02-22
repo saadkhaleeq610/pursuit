@@ -8,11 +8,39 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Customer struct {
+	CustomerID   int32
+	RestaurantID int32
+	Name         string
+	Email        pgtype.Text
+	Phone        pgtype.Text
+	CreatedAt    pgtype.Timestamp
+}
+
 type Invite struct {
 	ID           int32
 	Email        string
 	RoleID       int32
 	RestaurantID int32
+	CreatedAt    pgtype.Timestamp
+}
+
+type Menu struct {
+	MenuID       int32
+	RestaurantID int32
+	Name         string
+	Description  pgtype.Text
+	Price        pgtype.Numeric
+	IsAvailable  pgtype.Bool
+	CreatedAt    pgtype.Timestamp
+}
+
+type Order struct {
+	OrderID      int32
+	CustomerID   int32
+	RestaurantID int32
+	Status       string
+	OrderDetails []byte
 	CreatedAt    pgtype.Timestamp
 }
 
