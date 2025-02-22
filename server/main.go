@@ -62,5 +62,6 @@ func main() {
 	r.POST("/invite-user", middleware.AuthMiddleware(), handlers.InviteUserHandler(store))
 	r.POST("/check-invite", handlers.CheckInviteHandler(store))
 	r.POST("/join-staff", handlers.JoinStaffHandler(store))
+	r.POST("/create-customer", handlers.CreateCustomer(store))
 	r.Run(config.ServerAddress)
 }
