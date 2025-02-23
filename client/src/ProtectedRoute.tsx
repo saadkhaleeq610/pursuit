@@ -1,6 +1,7 @@
 import { Navigate } from "react-router";
 import { useAuthStore } from "@/store/useAuthStore";
 import Sidebar from "@/components/Navbar";
+import TopBar from "./components/Topbar";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, restaurant } = useAuthStore();
@@ -12,7 +13,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <Sidebar logoText={restaurant?.name || "Pursuit"} />
-      <main className="py-20 pl-64">{children}</main>
+      <TopBar/>
+      <main className="pl-64">{children}</main>
     </div>
   );
 };

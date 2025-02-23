@@ -33,9 +33,9 @@ const Orders = () => {
   const displayedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-semibold pb-6">Orders</h1>
+    <div className="px-6 bg-gray-50 min-h-screen">
+      <div className="flex justify-between pt-8 pb-8">
+        <h1 className="text-2xl font-semibold">Orders</h1>
         <Button className="bg-[#F65A11] hover:bg-orange-600 text-white">Add New Order</Button>
       </div>
 
@@ -82,7 +82,7 @@ const Orders = () => {
         />
       </div>
       
-      <Card>
+      <Card className="mb-10">
         <CardContent>
           <Table>
           <TableHeader>

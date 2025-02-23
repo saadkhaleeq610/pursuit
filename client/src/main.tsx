@@ -16,6 +16,7 @@ import RestaurantDetails from "./pages/RestaurantDetails";
 import Settings from "./pages/Settings";
 import axios from "axios";
 import Orders from "./pages/Orders";
+import Customers from "./pages/Customers";
 // import setupAxiosInterceptors from "./axiosInterceptor";
 
 // setupAxiosInterceptors();
@@ -112,6 +113,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           element={
             <ProtectedRoute>
               <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customers"
+          element={
+            <ProtectedRoute>
+              <Customers />
             </ProtectedRoute>
           }
         />
