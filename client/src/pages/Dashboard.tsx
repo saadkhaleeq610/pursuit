@@ -22,7 +22,7 @@ export default function DashboardPage() {
       {/* Main Content */}
       <Label>Welcome {user?.name}</Label>
       <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 mt-10">
-        <h1 className="text-2xl font-semibold text-center mb-6">Orders</h1>
+        <h1 className="text-2xl font-semibold text-center mb-6">Dashboard</h1>
         <div className="space-y-4">
 
         </div>

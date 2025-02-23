@@ -1,50 +1,90 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Table, TableHead, TableRow, TableCell, TableBody } from "@/components/ui/table";
-import Sidebar from "@/components/Sidebar";
+import React, { useState } from "react";
 
-const orders = [
-  { id: 1, product: "MacBook Air (M1, 2020)", customer: "Darrell Steward", date: "Apr 19, 08:01 AM", total: "$1,099.00", status: "Pending", items: "2 Items", shipping: "Free Shipping" },
-  { id: 2, product: "MacBook Pro 13-inch", customer: "Courtney Henry", date: "Apr 19, 09:05 AM", total: "$2,199.00", status: "Completed", items: "2 Items", shipping: "Free Shipping" },
-  { id: 3, product: "MacBook Air (Retina, 2019)", customer: "Arlene McCoy", date: "Apr 19, 10:30 AM", total: "$1,499.00", status: "Pending", items: "2 Items", shipping: "Free Shipping" }
-];
+const Orders = () => {
+  const ordersData = [
+    { orderName: "Pizza", customerName: "XYZ", orderId: "#001", date: "2024-02-22", total: "$15", paymentStatus: "Paid", items: 2 },
+  ];
 
-export const OrdersPage = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
+
+  const filteredOrders = ordersData.filter(order =>
+    order.orderName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    order.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    order.orderId.includes(searchQuery)
+  );
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const displayedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
-      <div className="p-6 flex-1">
-    <Sidebar/>
-      <Card>
-        <div className="p-4 flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Orders</h1>
-          <Button>Create Order</Button>
+    <div className="p-6">
+      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
+        {/* Search Bar */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search orders..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
-      </Card>
-      <Table className="mt-4">
-        <TableHead>
-          <TableRow>
-            <TableCell>Order</TableCell>
-            <TableCell>Customer</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Total</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Items</TableCell>
-            <TableCell>Shipping</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.map(order => (
-            <TableRow key={order.id}>
-              <TableCell>{order.product}</TableCell>
-              <TableCell>{order.customer}</TableCell>
-              <TableCell>{order.date}</TableCell>
-              <TableCell>{order.total}</TableCell>
-              <TableCell>{order.status}</TableCell>
-              <TableCell>{order.items}</TableCell>
-              <TableCell>{order.shipping}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+
+        {/* Orders Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="p-3 text-left">Order Name</th>
+                <th className="p-3 text-left">Customer</th>
+                <th className="p-3 text-left">Order ID</th>
+                <th className="p-3 text-left">Date</th>
+                <th className="p-3 text-left">Total</th>
+                <th className="p-3 text-left">Payment</th>
+                <th className="p-3 text-left">Items</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayedOrders.map((order, index) => (
+                <tr key={index} className="border-t">
+                  <td className="p-3">{order.orderName}</td>
+                  <td className="p-3">{order.customerName}</td>
+                  <td className="p-3">{order.orderId}</td>
+                  <td className="p-3">{order.date}</td>
+                  <td className="p-3">{order.total}</td>
+                  <td className="p-3">{order.paymentStatus}</td>
+                  <td className="p-3">{order.items}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-between items-center mt-4">
+          <p className="text-gray-600">Page {currentPage} of {totalPages}</p>
+          <div className="space-x-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 text-sm bg-gray-200 rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 text-sm bg-gray-200 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
+
+export default Orders;
