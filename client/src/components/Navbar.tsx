@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Gear, UserCircle, Tag, Martini, House, ListBullets, UserPlus, ChartBar, SuitcaseSimple } from "phosphor-react";
+import { Gear, UserCircle, Tag, Martini, House, ListBullets, UserPlus, ChartBar, SuitcaseSimple, Hamburger } from "phosphor-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -20,6 +20,7 @@ const Sidebar: FC<SidebarProps> = ({ logoText, className }) => {
     { path: "/customers", label: "Customers", icon: <ListBullets size={18} />, auth: true },
     { path: "/analytics", label: "Analytics", icon: <ChartBar size={18} />, auth: true },
     { path: "/marketing", label: "Marketing", icon: <SuitcaseSimple size={18} />, auth: true },
+    { path: "/menu", label: "Menu", icon: <Hamburger size={18} />, auth: true },
     { path: "/restaurant-details", label: "Restaurant Details", icon: <Martini size={18} />, auth: true },
     { path: "/settings", label: "Settings", icon: <Gear size={18} /> },
     { path: "/invite-staff", label: "Invite Staff", icon: <UserPlus size={18} />, auth: true },
@@ -55,7 +56,6 @@ const Sidebar: FC<SidebarProps> = ({ logoText, className }) => {
           })}
         </div>
 
-        {/* Logout Button at Bottom */}
         <button
           onClick={() => {
             localStorage.clear();
