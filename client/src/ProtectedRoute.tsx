@@ -12,7 +12,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <Sidebar logoText={restaurant?.name || "Pursuit"} />
-      <main className="py-20">{children}</main>
+      <main className="py-20 pl-64">{children}</main>
     </div>
   );
 };
