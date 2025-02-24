@@ -45,3 +45,26 @@ func CreateCustomer(store *db.Queries) gin.HandlerFunc {
 }
 
 // Get all the customers of a restaurant
+// After your existing imports and code...
+
+type listCustomersRequest struct {
+	RestaurantID int32 `uri:"restaurant_id" binding:"required"`
+}
+
+func ListCustomers(store *db.Queries) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req listCustomersRequest
+		if err := c.ShouldBindUri(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		customers, err := store.ListCustomersByRestaurant(c, req.RestaurantID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list customers"})
+			return
+		}
+
+		c.JSON(http.StatusOK, customers)
+	}
+}
