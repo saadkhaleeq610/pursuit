@@ -25,8 +25,8 @@ type Invite struct {
 	CreatedAt    pgtype.Timestamp
 }
 
-type Menu struct {
-	MenuID       int32
+type Item struct {
+	ItemID       int32
 	RestaurantID int32
 	Name         string
 	Description  pgtype.Text

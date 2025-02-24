@@ -23,7 +23,6 @@ func CreateCustomer(store *db.Queries) gin.HandlerFunc {
 			return
 		}
 		restaurantIDInt32 := req.RestaurantID
-
 		customer, err := store.CreateCustomer(c, db.CreateCustomerParams{
 			RestaurantID: restaurantIDInt32,
 			Name:         req.Name,
@@ -44,3 +43,5 @@ func CreateCustomer(store *db.Queries) gin.HandlerFunc {
 		c.JSON(http.StatusOK, customer)
 	}
 }
+
+// Get all the customers of a restaurant
