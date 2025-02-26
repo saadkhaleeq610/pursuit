@@ -10,7 +10,7 @@ CREATE TABLE user_tokens (
 );
 -- +goose StatementEnd
 
-s
+
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE IF EXISTS user_tokens;
