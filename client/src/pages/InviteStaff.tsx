@@ -30,12 +30,12 @@ export default function InviteUserPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6">
         <h1 className="text-2xl font-semibold text-center mb-6">Invite User</h1>
         <form onSubmit={handleInvite} className="space-y-4">
           <div>
-            <Label className="text-gray-600">Email</Label>
+            <Label className="text-gray-900">Email</Label>
             <input
               type="email"
               value={email}
@@ -46,13 +46,10 @@ export default function InviteUserPage() {
           </div>
           {message && <p className="text-green-600 text-center">{message}</p>}
           {error && <p className="text-red-600 text-center">{error}</p>}
-          <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600">
+          <Button type="submit" className="w-full bg-[#F65A11] hover:bg-orange-600 text-white">
             Send Invite
           </Button>
         </form>
-        <Button onClick={() => navigate(-1)} className="mt-4 w-full bg-gray-500 hover:bg-gray-600">
-          Back
-        </Button>
       </div>
     </div>
   );

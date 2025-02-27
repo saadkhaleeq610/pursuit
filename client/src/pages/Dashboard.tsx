@@ -18,7 +18,7 @@ export default function DashboardPage() {
 
   }
   return (
-    <div className="flex flex-col items-center min-h-screen p-4 pt-30">      
+    <div className="flex flex-col items-center min-h-screen p-4 pt-30 bg-gray-50">      
       {/* Main Content */}
       <Label>Welcome {user?.name}</Label>
       <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6 mt-10">

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 
 const Settings = () => {
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 space-y-6">
+    <div className="max-w-lg mx-auto mt-10 p-6 space-y-6 bg-gray-40">
       <h1 className="text-2xl font-semibold">Settings</h1>
 
       <div className="flex items-center justify-between">

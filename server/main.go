@@ -63,7 +63,11 @@ func main() {
 	r.POST("/check-invite", handlers.CheckInviteHandler(store))
 	r.POST("/join-staff", handlers.JoinStaffHandler(store))
 	r.POST("/create-customer", handlers.CreateCustomer(store))
-	r.POST("/create-item", handlers.CreateItem(store))
 	r.GET("/customers/:restaurant_id", handlers.ListCustomers(store))
+	r.POST("/create-item", handlers.CreateItem(store))
+	r.GET("/list-items/:restaurant_id/items", handlers.ListItems(store))
+	r.GET("/get-item/:restaurant_id", handlers.GetItem(store))
+	r.GET("/items/:id", handlers.UpdateItem(store))
+	r.GET("/items/:id", handlers.DeleteItem(store))
 	r.Run(config.ServerAddress)
 }
