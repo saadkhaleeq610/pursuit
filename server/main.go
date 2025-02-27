@@ -1,6 +1,5 @@
 package main
 
-//TODO: better handling of the config . Right Now it is against the DRY Principal
 import (
 	"context"
 	"log"
@@ -39,22 +38,29 @@ func main() {
 
 	r.POST("/signup", handlers.SignupHandler(store))
 	r.POST("/login", handlers.LoginHandler(store))
-	r.POST("/register-restaurant", middleware.AuthMiddleware(), handlers.RegisterRestaurant(store))
-	r.POST("/restaurant-details", middleware.AuthMiddleware(), handlers.GetRestaurantDetails(store))
 	r.POST("/logout", middleware.AuthMiddleware(), handlers.LogoutHandler(store))
 	r.POST("/refresh-token", handlers.RefreshTokenHandler(store))
+
+	r.POST("/register-restaurant", middleware.AuthMiddleware(), handlers.RegisterRestaurant(store))
+	r.GET("/restaurants/:restaurant_id/details", middleware.AuthMiddleware(), handlers.GetRestaurantDetails(store))
+
 	r.POST("/invite-user", middleware.AuthMiddleware(), handlers.InviteUserHandler(store))
-	r.POST("/check-invite", middleware.AuthMiddleware(), handlers.CheckInviteHandler(store))
+	r.POST("/check-invite", handlers.CheckInviteHandler(store))
 	r.POST("/join-staff", handlers.JoinStaffHandler(store))
-	r.POST("/create-customer", middleware.AuthMiddleware(), handlers.CreateCustomer(store))
-	r.GET("/customers/:restaurant_id", middleware.AuthMiddleware(), handlers.ListCustomers(store))
-	r.POST("/create-item", middleware.AuthMiddleware(), handlers.CreateItem(store))
-	r.GET("/list-items/:restaurant_id/items", middleware.AuthMiddleware(), handlers.ListItems(store))
-	r.GET("/get-item/:restaurant_id", middleware.AuthMiddleware(), handlers.GetItem(store))
-	r.GET("/items/:id", middleware.AuthMiddleware(), handlers.UpdateItem(store))
-	r.GET("/items/:id", middleware.AuthMiddleware(), handlers.DeleteItem(store))
+
+	r.POST("/customers", middleware.AuthMiddleware(), handlers.CreateCustomer(store))
+	r.GET("/restaurants/:restaurant_id/customers", middleware.AuthMiddleware(), handlers.ListCustomers(store))
+
+	r.POST("/items", middleware.AuthMiddleware(), handlers.CreateItem(store))
+	r.GET("/restaurants/:restaurant_id/items", middleware.AuthMiddleware(), handlers.ListItems(store))
+	r.GET("/items/:id", middleware.AuthMiddleware(), handlers.GetItem(store))
+	r.PUT("/items/:id", middleware.AuthMiddleware(), handlers.UpdateItem(store))
+	r.DELETE("/items/:id", middleware.AuthMiddleware(), handlers.DeleteItem(store))
+
+	r.POST("/orders", middleware.AuthMiddleware(), handlers.CreateOrder(store))
 	r.GET("/orders/:order_id", middleware.AuthMiddleware(), handlers.GetOrderById(store))
 	r.GET("/restaurants/:restaurant_id/orders", middleware.AuthMiddleware(), handlers.ListOrdersByRestaurant(store))
 	r.GET("/customers/:customer_id/orders", middleware.AuthMiddleware(), handlers.ListOrdersByCustomerId(store))
+
 	r.Run(config.ServerAddress)
 }

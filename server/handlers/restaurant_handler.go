@@ -25,7 +25,7 @@ type createRestaurantResponse struct {
 }
 
 type getRestDetailsRequest struct {
-	RestaurantID int32 `json:"restaurant_id" binding:"required"`
+	RestaurantID int32 `uri:"restaurant_id" binding:"required"`
 }
 
 type getRestDetailsResponse struct {
@@ -115,7 +115,7 @@ func GetRestaurantDetails(store *db.Queries) gin.HandlerFunc {
 
 		// Parse request body
 		var req getRestDetailsRequest
-		if err := c.ShouldBindJSON(&req); err != nil {
+		if err := c.ShouldBindUri(&req); err != nil {
 			log.Printf("❌ [ERROR] Failed to bind JSON: %v", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
