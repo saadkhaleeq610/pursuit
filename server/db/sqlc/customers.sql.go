@@ -24,14 +24,23 @@ type CreateCustomerParams struct {
 	Phone        pgtype.Text
 }
 
-func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error) {
+type CreateCustomerRow struct {
+	CustomerID   int32
+	RestaurantID int32
+	Name         string
+	Email        pgtype.Text
+	Phone        pgtype.Text
+	CreatedAt    pgtype.Timestamp
+}
+
+func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (CreateCustomerRow, error) {
 	row := q.db.QueryRow(ctx, createCustomer,
 		arg.RestaurantID,
 		arg.Name,
 		arg.Email,
 		arg.Phone,
 	)
-	var i Customer
+	var i CreateCustomerRow
 	err := row.Scan(
 		&i.CustomerID,
 		&i.RestaurantID,
@@ -59,9 +68,18 @@ FROM customers
 WHERE customer_id = $1
 `
 
-func (q *Queries) GetCustomerByID(ctx context.Context, customerID int32) (Customer, error) {
+type GetCustomerByIDRow struct {
+	CustomerID   int32
+	RestaurantID int32
+	Name         string
+	Email        pgtype.Text
+	Phone        pgtype.Text
+	CreatedAt    pgtype.Timestamp
+}
+
+func (q *Queries) GetCustomerByID(ctx context.Context, customerID int32) (GetCustomerByIDRow, error) {
 	row := q.db.QueryRow(ctx, getCustomerByID, customerID)
-	var i Customer
+	var i GetCustomerByIDRow
 	err := row.Scan(
 		&i.CustomerID,
 		&i.RestaurantID,
@@ -80,15 +98,24 @@ WHERE restaurant_id = $1
 ORDER BY created_at DESC
 `
 
-func (q *Queries) ListCustomersByRestaurant(ctx context.Context, restaurantID int32) ([]Customer, error) {
+type ListCustomersByRestaurantRow struct {
+	CustomerID   int32
+	RestaurantID int32
+	Name         string
+	Email        pgtype.Text
+	Phone        pgtype.Text
+	CreatedAt    pgtype.Timestamp
+}
+
+func (q *Queries) ListCustomersByRestaurant(ctx context.Context, restaurantID int32) ([]ListCustomersByRestaurantRow, error) {
 	rows, err := q.db.Query(ctx, listCustomersByRestaurant, restaurantID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Customer
+	var items []ListCustomersByRestaurantRow
 	for rows.Next() {
-		var i Customer
+		var i ListCustomersByRestaurantRow
 		if err := rows.Scan(
 			&i.CustomerID,
 			&i.RestaurantID,

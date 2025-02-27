@@ -15,6 +15,7 @@ type Customer struct {
 	Email        pgtype.Text
 	Phone        pgtype.Text
 	CreatedAt    pgtype.Timestamp
+	Location     pgtype.Text
 }
 
 type Invite struct {

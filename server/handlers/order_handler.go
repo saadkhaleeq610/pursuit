@@ -16,20 +16,16 @@ type createOrderRequest struct {
 }
 
 type getOrderRequest struct {
-	OrderID int32 `json:"order_id" binding:"required"`
+	OrderID int32 `uri:"order_id" binding:"required"`
 }
 
 type listOrdersRequest struct {
-	CustomerID int32 `json:"customer_id" binding:"required"`
+	CustomerID int32 `uri:"customer_id" binding:"required"`
 }
 
-// type createMenuItemRequest struct {
-// 	RestaurantID int32  `json:"restaurant_id" binding:"required"`
-// 	Name         string `json:"name" binding:"required"`
-// 	Description  string `json:"description" binding:"required"`
-// 	Price        string `json:"price" binding:"required"`
-// 	IsAvailable  *bool  `json:"is_available"` // Optional; defaults to true if omitted
-// }
+type listOrdersByRestReq struct {
+	RestaurantID int32 `uri:"restaurant_id" binding:"required"`
+}
 
 func CreateOrder(store *db.Queries) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -55,10 +51,10 @@ func CreateOrder(store *db.Queries) gin.HandlerFunc {
 	}
 }
 
-func GetOrder(store *db.Queries) gin.HandlerFunc {
+func GetOrderById(store *db.Queries) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req getOrderRequest
-		if err := c.ShouldBindJSON(&req); err != nil {
+		if err := c.ShouldBindUri(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
@@ -71,10 +67,25 @@ func GetOrder(store *db.Queries) gin.HandlerFunc {
 	}
 }
 
-func ListOrders(store *db.Queries) gin.HandlerFunc {
+func ListOrdersByRestaurant(store *db.Queries) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req listOrdersByRestReq
+		if err := c.ShouldBindUri(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		orders, err := store.ListCustomersByRestaurant(c, req.RestaurantID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list orders"})
+			return
+		}
+		c.JSON(http.StatusOK, orders)
+	}
+}
+func ListOrdersByCustomerId(store *db.Queries) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req listOrdersRequest
-		if err := c.ShouldBindJSON(&req); err != nil {
+		if err := c.ShouldBindUri(&req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
@@ -86,43 +97,3 @@ func ListOrders(store *db.Queries) gin.HandlerFunc {
 		c.JSON(http.StatusOK, orders)
 	}
 }
-
-// It is not working as of now need to fix it
-// func CreateMenuItem(store *db.Queries) gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		var req createMenuItemRequest
-// 		if err := c.ShouldBindJSON(&req); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 			return
-// 		}
-
-// 		// Use default true if IsAvailable is not provided.
-// 		isAvailable := true
-// 		if req.IsAvailable != nil {
-// 			isAvailable = *req.IsAvailable
-// 		}
-
-// 		menuItem, err := store.CreateMenuItem(c, db.CreateMenuItemParams{
-// 			RestaurantID: req.RestaurantID,
-// 			Name:         req.Name,
-// 			Description: pgtype.Text{
-// 				String: req.Description,
-// 				Valid:  req.Description != "",
-// 			},
-// 			Price: pgtype.Numeric{
-// 				String: req.Price,
-// 				Valid:  true,
-// 			},
-// 			IsAvailable: pgtype.Bool{
-// 				Bool:  isAvailable,
-// 				Valid: true,
-// 			},
-// 		})
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create menu item"})
-// 			return
-// 		}
-
-// 		c.JSON(http.StatusOK, menuItem)
-// 	}
-// }

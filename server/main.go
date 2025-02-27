@@ -15,22 +15,6 @@ import (
 	"github.com/saadkhaleeq610/pursuit/server/middleware"
 )
 
-// func CORSMiddleware() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-// 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-// 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
-// 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-
-// 		if c.Request.Method == "OPTIONS" {
-// 			c.AbortWithStatus(http.StatusNoContent)
-// 			return
-// 		}
-
-// 		c.Next()
-// 	}
-// }
-
 func main() {
 	config, err := config.LoadConfig()
 	if err != nil {
@@ -60,14 +44,17 @@ func main() {
 	r.POST("/logout", middleware.AuthMiddleware(), handlers.LogoutHandler(store))
 	r.POST("/refresh-token", handlers.RefreshTokenHandler(store))
 	r.POST("/invite-user", middleware.AuthMiddleware(), handlers.InviteUserHandler(store))
-	r.POST("/check-invite", handlers.CheckInviteHandler(store))
+	r.POST("/check-invite", middleware.AuthMiddleware(), handlers.CheckInviteHandler(store))
 	r.POST("/join-staff", handlers.JoinStaffHandler(store))
-	r.POST("/create-customer", handlers.CreateCustomer(store))
-	r.GET("/customers/:restaurant_id", handlers.ListCustomers(store))
-	r.POST("/create-item", handlers.CreateItem(store))
-	r.GET("/list-items/:restaurant_id/items", handlers.ListItems(store))
-	r.GET("/get-item/:restaurant_id", handlers.GetItem(store))
-	r.GET("/items/:id", handlers.UpdateItem(store))
-	r.GET("/items/:id", handlers.DeleteItem(store))
+	r.POST("/create-customer", middleware.AuthMiddleware(), handlers.CreateCustomer(store))
+	r.GET("/customers/:restaurant_id", middleware.AuthMiddleware(), handlers.ListCustomers(store))
+	r.POST("/create-item", middleware.AuthMiddleware(), handlers.CreateItem(store))
+	r.GET("/list-items/:restaurant_id/items", middleware.AuthMiddleware(), handlers.ListItems(store))
+	r.GET("/get-item/:restaurant_id", middleware.AuthMiddleware(), handlers.GetItem(store))
+	r.GET("/items/:id", middleware.AuthMiddleware(), handlers.UpdateItem(store))
+	r.GET("/items/:id", middleware.AuthMiddleware(), handlers.DeleteItem(store))
+	r.GET("/orders/:order_id", middleware.AuthMiddleware(), handlers.GetOrderById(store))
+	r.GET("/restaurants/:restaurant_id/orders", middleware.AuthMiddleware(), handlers.ListOrdersByRestaurant(store))
+	r.GET("/customers/:customer_id/orders", middleware.AuthMiddleware(), handlers.ListOrdersByCustomerId(store))
 	r.Run(config.ServerAddress)
 }
