@@ -74,7 +74,7 @@ func ListOrdersByRestaurant(store *db.Queries) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		orders, err := store.ListCustomersByRestaurant(c, req.RestaurantID)
+		orders, err := store.GetOrdersByRestaurant(c, req.RestaurantID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list orders"})
 			return
